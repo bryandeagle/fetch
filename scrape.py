@@ -157,34 +157,34 @@ def worth_it(html):
     return re.match(r'[^@]+@[^@]+\.[^@]+', html.get_text(), flags=re.IGNORECASE)
 
 
-def get_all_pages(website, base, level=0):
+def get_all_pages(website, base, log, level=0):
     """ Get all pages from a given website """
     html = requests.get(website, headers=HEADERS).text
     site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
     all_links = site.findAll('a', attrs={'href': re.compile('^/')})
+    log.debug('Page: {}. Links: {}'.format(website, [link.get('href') for link in all_links]))
     if level == 1:
         return ['{}{}'.format(base, link.get('href')) for link in all_links]
     else:
         for link in all_links:
-            return get_all_pages('{}{}'.format(website, link.get('href')), base=base, level=level+1)
+            return get_all_pages('{}{}'.format(website, link.get('href')), base, log, level=level+1)
 
 
 def ignore_robots(html):
     """ Ignore pesky tags """
-    html.replace('<!--googleoff: index-->', '')
-    html.replace('<!--googleon: index-->', '')
+    html = html.replace('<!--googleoff: index-->', '')
+    html = html.replace('<!--googleon: index-->', '')
     return html
 
 
 def scrape(website, log):
     results = set()
-    all_pages = set(get_all_pages(website, website))
+    all_pages = set(get_all_pages(website, website, log))
     log.debug('Pages: {}'.format(all_pages))
     for page in all_pages:
         # Download website
         html = requests.get(page, headers=HEADERS).text
         site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
-        log.debug(html)
         # If page has no emails, ignore
         if worth_it(site):
             log.debug('Parsing page: {}'.format(page))

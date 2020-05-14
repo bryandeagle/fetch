@@ -24,7 +24,7 @@ def _display(url):
     elif url.startswith('https://'):
         url = url[8:]
     if url.startswith('www.'):
-        url = url[5:]
+        url = url[4:]
     return url.capitalize()
 
 

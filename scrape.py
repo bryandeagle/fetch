@@ -190,9 +190,9 @@ def scrape(website, log):
     if all_pages is None:
         all_pages = {'{}/'.format(website)}
     else:
-        all_pages.add('{}/'.format(website))
+        all_pages.append('{}/'.format(website))
     log.debug('Pages: {}'.format(all_pages))
-    for page in all_pages:
+    for page in set(all_pages):
         # Download website
         html = requests.get(page, headers=HEADERS).text
         site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')

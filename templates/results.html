@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" href="/static/favicon.ico">
     <title>Fetcher</title>
-    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/litera.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/b6e859a744.js" crossorigin="anonymous"></script>
     <style>
       body {
@@ -45,9 +45,9 @@
           <form method="post" action="/download">
             <input type="hidden" name="website" value="{{ website }}">
             <input type="hidden" name="data" value="{{ json }}">
-            <a class="btn btn-lg btn-primary return" href="/"><i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back</a>
-            <a class="btn btn-lg btn-danger return" href="mailto:bryan@dea.gl?subject=Fetch Failed on {{ website }}"><i class="fas fa-bug"></i>&nbsp;&nbsp;Report</a>
-            <button class="btn btn-lg btn-success download" type="submit"><i class="fas fa-download"></i>&nbsp;&nbsp;CSV</button>
+            <a class="btn btn-primary return" href="/"><i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back</a>
+            <a class="btn btn-danger return" href="mailto:bryan@dea.gl?subject=Fetch Failed on {{ website }}"><i class="fas fa-bug"></i>&nbsp;&nbsp;Report</a>
+            <button class="btn btn-success download" type="submit"><i class="fas fa-download"></i>&nbsp;&nbsp;CSV</button>
           </form>
         </td>
       </table>

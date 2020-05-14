@@ -82,7 +82,6 @@ def root():
     log.debug('Received request for {}'.format(request.form['website']))
     url = _sanitize(request.form['website'], log)
     try:
-        raise Exception
         contacts = scrape(url, log)
         json_txt = json.dumps([c.dict() for c in contacts])
         return render_template('results.html',

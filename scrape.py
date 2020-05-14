@@ -179,7 +179,7 @@ def ignore_robots(html):
 
 def scrape(website, log):
     results = set()
-    all_pages = set(get_all_pages(website, website, log))
+    all_pages = get_all_pages(website, website, log)
     if all_pages is None:
         all_pages = {'{}/'.format(website)}
     else:
@@ -208,7 +208,8 @@ def _setup_log(file_size):
     formatter = Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s',
                           datefmt='%Y-%m-%d %H:%M:%S')
     file_handler = handlers.RotatingFileHandler(filename=LOG_FILE,
-                                                maxBytes=file_size)
+                                                maxBytes=file_size,
+                                                encoding='utf-8')
     file_handler.setFormatter(formatter)
     file_handler.setLevel(DEBUG)
     logger = getLogger(__name__)
@@ -219,6 +220,6 @@ def _setup_log(file_size):
 
 if __name__ == '__main__':
     log = _setup_log(file_size=5 * 1024 * 1024)
-    res = scrape('https://www.igsouthwest.com', log)
+    res = scrape('http://crossdevelopment.net', log)
     for item in res:
         print(item)

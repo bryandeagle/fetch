@@ -2,6 +2,7 @@ from flask import Flask, request, send_file, Response, redirect, url_for, render
 from logging import handlers, Formatter, getLogger, DEBUG
 from scrape import scrape
 from os import path
+import json
 
 
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
@@ -28,8 +29,13 @@ def _display(url):
     return url.capitalize()
 
 
-def json_to_csv(json):
-    pass
+def json_to_csv(json_txt, website):
+    """ Convert json data to csv file """
+    text = 'First Name,Last Name,Company Name,Job Title,Email ,Phone Number,Industry Role\n'
+    for item in json.loads(json_txt):
+        text += '{},{},{},{},{},{},\n'.format(item['first'], item['last'], website,
+                                              item['position'], item['email'], item['phone'])
+    return text
 
 
 def _setup_log(file_size):
@@ -67,7 +73,8 @@ def error():
 def download():
     print(request.form['data'])
     """ Returns CSV file """
-    return Response(json_to_csv(request.form['data']), mimetype="text/csv",
+    data = json_to_csv(request.form['data'], request.form['website'])
+    return Response(data, mimetype="text/csv",
                     headers={"Content-disposition": "attachment; filename=contacts.csv"})
 
 
@@ -84,7 +91,11 @@ def root():
         url = _sanitize(request.form['website'], log)
         log.debug('Received request for {}'.format(url))
         contacts = scrape(url, log)
-        return render_template('results.html', website=_display(url), results=contacts)
+        json_txt = json.dumps([c.dict() for c in contacts])
+        return render_template('results.html',
+                               website=_display(url),
+                               results=contacts,
+                               json=json_txt)
     except Exception as e:
         log.error(e)
         return redirect(url_for('error'))

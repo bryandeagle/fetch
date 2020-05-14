@@ -20,9 +20,11 @@ class Contact(object):
         self.phone = phone
         self.position = position
         self.first = None
+        self.last = None
 
-    def get_first(self):
-        self.first = self.name.split()[0]
+    def get_names(self):
+        split = self.name.split()
+        self.first, self.last = split[0], split[-1]
 
     def merge(self, other):
         """ Merge contact with another contact """
@@ -47,7 +49,12 @@ class Contact(object):
 
     def dict(self):
         """ Return class in dictionary format """
-        return {'name': self.name, 'email': self.email, 'position': self.position, 'phone': self.phone}
+        return {'first': self.first,
+                'last': self.last,
+                'name': self.name,
+                'email': self.email,
+                'position': self.position,
+                'phone': self.phone}
 
     def __repr__(self):
         """ Print class in a pretty form """
@@ -148,7 +155,7 @@ def get_contacts(root_node):
     clean_tree(root_node)
     roll_up(root_node)
     all_nodes = findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
-    [n.contact.get_first() for n in all_nodes]
+    [n.contact.get_names() for n in all_nodes]
     return [n.contact for n in all_nodes]
 
 

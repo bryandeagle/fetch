@@ -42,9 +42,10 @@
         <td><h1>{{ website }}</h1></td>
         <td class="right">
           <form method="post" action="/download">
-            <input type="hidden" name="data" value="{{ results }}">
+            <input type="hidden" name="website" value="{{ website }}">
+            <input type="hidden" name="data" value="{{ json }}">
             <a class="btn btn-lg btn-primary return" href="/">Back</a>
-            <button class="btn btn-lg btn-primary download" type="submit">CSV</button>
+            <button class="btn btn-lg btn-success download" type="submit">CSV</button>
           </form>
         </td>
       </table>
@@ -52,7 +53,7 @@
         <thead>
           <tr>
             <th scope="col">First Name</th>
-            <th scope="col">Full Name</th>
+            <th scope="col">Last Name</th>
             <th scope="col">Position</th>
             <th scope="col">Email</th>
             <th scope="col">Phone</th>
@@ -62,7 +63,7 @@
         {% for result in results %}
           <tr>
             <td>{{ result.first }}</td>
-            <td>{{ result.name }}</td>
+            <td>{{ result.last }}</td>
             <td>{{ result.position }}</td>
             <td>{{ result.email }}</td>
             <td>{{ result.phone }}</td>

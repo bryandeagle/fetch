@@ -20,11 +20,11 @@ def _sanitize(url, log):
 
 def _display(url):
     if url.startswith('http://'):
-        url[0:6] = []
+        url = url[7:]
     elif url.startswith('https://'):
-        url[0:7] = []
+        url = url[8:]
     if url.startswith('www.'):
-        url[0:4] = []
+        url = url[5:]
     return url.capitalize()
 
 

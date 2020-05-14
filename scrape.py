@@ -203,6 +203,6 @@ def _setup_log(file_size):
 
 if __name__ == '__main__':
     log = _setup_log(file_size=5 * 1024 * 1024)
-    res = scrape('http://ldpre.com', log)
+    res = scrape('https://www.ryancompanies.com', log)
     for item in res:
         print(item)

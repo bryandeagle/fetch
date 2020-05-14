@@ -28,11 +28,26 @@
         background-color: #fff;
         padding: 1rem 1rem;
       }
+      .top {
+        width: 100%;
+      }
+      .right {
+        text-align: right;
+      }
     </style>
   </head>
   <body class="text-center">
     <div class="jumbotron">
-      <h1>Contacts at {{ website }}</h1>
+      <table class="top">
+        <td><h1>{{ website }}</h1></td>
+        <td class="right">
+          <form method="post" action="/download">
+            <input type="hidden" name="data" value="{{ results }}">
+            <a class="btn btn-lg btn-primary return" href="/">Back</a>
+            <button class="btn btn-lg btn-primary download" type="submit">CSV</button>
+          </form>
+        </td>
+      </table>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -55,7 +70,6 @@
         {% endfor %}
         </tbody>
       </table>
-      <a class="btn btn-lg btn-primary btn-block" href="/">Return</a>
     </div>
   </body>
 </html>

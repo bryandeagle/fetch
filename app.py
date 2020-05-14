@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify, redirect, url_for, render_template
+from flask import Flask, request, send_file, Response, redirect, url_for, render_template
 from logging import handlers, Formatter, getLogger, DEBUG
 from scrape import scrape
 from os import path
@@ -26,6 +26,10 @@ def _display(url):
     if url.startswith('www.'):
         url = url[4:]
     return url.capitalize()
+
+
+def json_to_csv(json):
+    pass
 
 
 def _setup_log(file_size):
@@ -57,6 +61,14 @@ def get_log():
 def error():
     """ Returns static error document """
     return app.send_static_file('error.html')
+
+
+@app.route('/download', methods=['POST'])
+def download():
+    print(request.form['data'])
+    """ Returns CSV file """
+    return Response(json_to_csv(request.form['data']), mimetype="text/csv",
+                    headers={"Content-disposition": "attachment; filename=contacts.csv"})
 
 
 @app.route('/')

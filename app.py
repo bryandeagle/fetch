@@ -71,7 +71,6 @@ def error():
 
 @app.route('/download', methods=['POST'])
 def download():
-    print(request.form['data'])
     """ Returns CSV file """
     data = json_to_csv(request.form['data'], request.form['website'])
     return Response(data, mimetype="text/csv",

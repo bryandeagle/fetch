@@ -68,7 +68,8 @@ def root():
         log.debug('Received request for {}'.format(url))
         contacts = scrape(url, log)
         return render_template('results.html', website=_display(url), results=contacts)
-    except:
+    except Exception as e:
+        log.error(e)
         return redirect(url_for('error'))
 
 

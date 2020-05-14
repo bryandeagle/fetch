@@ -20,10 +20,12 @@ def _sanitize(url, log):
 
 def _display(url):
     if url.startswith('http://'):
-        return url[7:].capitalize()
+        url[0:6] = []
     elif url.startswith('https://'):
-        return url[8:].capitalize()
-    return url
+        url[0:7] = []
+    if url.startswith('www.'):
+        url[0:4] = []
+    return url.capitalize()
 
 
 def _setup_log(file_size):

@@ -6,6 +6,7 @@
     <link rel="icon" href="/static/favicon.ico">
     <title>Contacts</title>
     <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b6e859a744.js" crossorigin="anonymous"></script>
     <style>
       html,body {
         height: 100%;
@@ -45,13 +46,17 @@
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
       }
+      a {
+        min-width: 150px;
+      }
     </style>
   </head>
   <body class="text-center">
     <form class="form-info" method="post" action="/">
-      <img class="mb-4" src="/static/warning.svg" alt="" width="128" height="128">
-      <h1 class="h3 mb-3 font-weight-normal">An Error Has Occurred</h1>
-      <a class="btn btn-lg btn-primary btn-block" href="/">Try Again</a>
+      <h1 class="h1 mb-3 font-weight-normal">An Error Has Occurred</h1>
+      <img class="mb-3" src="/static/bt.png" alt="" width="300">
+      <a class="btn btn-lg btn-primary" href="/"><i class="fas fa-arrow-left"></i> Back</a>
+      <a class="btn btn-lg btn-danger" href="mailto:bryan@dea.gl?subject=Fetch Failed on {{ website }}"><i class="fas fa-bug"></i> Report</a>
     </form>
   </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, Response, redirect, url_for, render_template
+from flask import Flask, request, send_file, Response, render_template
 from logging import handlers, Formatter, getLogger, DEBUG
 from scrape import scrape
 from os import path
@@ -63,12 +63,6 @@ def get_log():
     return send_file(LOG_FILE, as_attachment=True)
 
 
-@app.route('/error')
-def error():
-    """ Returns static error document """
-    return app.send_static_file('error.html')
-
-
 @app.route('/download', methods=['POST'])
 def download():
     """ Returns CSV file """
@@ -85,10 +79,10 @@ def index():
 
 @app.route('/', methods=['POST'])
 def root():
+    log.debug('Received request for {}'.format(request.form['website']))
+    url = _sanitize(request.form['website'], log)
     try:
-        log.debug('Received request for {}'.format(request.form['website']))
-        url = _sanitize(request.form['website'], log)
-        log.debug('Received request for {}'.format(url))
+        raise Exception
         contacts = scrape(url, log)
         json_txt = json.dumps([c.dict() for c in contacts])
         return render_template('results.html',
@@ -97,7 +91,7 @@ def root():
                                json=json_txt)
     except Exception as e:
         log.error(e)
-        return redirect(url_for('error'))
+        return render_template('error.html', website=url)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,4 @@
 bs4
 anytree
 flask
-twisted
-arachne
-scrapy
-sqlalchemy
 requests

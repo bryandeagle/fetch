@@ -180,6 +180,10 @@ def ignore_robots(html):
 def scrape(website, log):
     results = set()
     all_pages = set(get_all_pages(website, website, log))
+    if all_pages is None:
+        all_pages = {'{}/'.format(website)}
+    else:
+        all_pages.add('{}/'.format(website))
     log.debug('Pages: {}'.format(all_pages))
     for page in all_pages:
         # Download website
@@ -215,6 +219,6 @@ def _setup_log(file_size):
 
 if __name__ == '__main__':
     log = _setup_log(file_size=5 * 1024 * 1024)
-    res = scrape('https://www.ryancompanies.com', log)
+    res = scrape('https://www.igsouthwest.com', log)
     for item in res:
         print(item)

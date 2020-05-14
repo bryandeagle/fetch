@@ -10,6 +10,8 @@ LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 def _sanitize(url, log):
     if not url.startswith('http'):
         new_url = 'http://{}'.format(url)
+    else:
+        new_url = url
     if new_url.endswith('/'):
         new_url = url[:-1]
     log.debug('URL {} sanitized to {}'.format(url, new_url))

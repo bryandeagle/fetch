@@ -11,6 +11,10 @@ class Contact(object):
         self.name = name
         self.phone = phone
         self.position = position
+        self.first = None
+
+    def get_first(self):
+        self.first = self.name.split()[0]
 
     def merge(self, other):
         """ Merge contact with another contact """
@@ -33,11 +37,12 @@ class Contact(object):
         position = self.position is None or other.position is None or self.position == other.position
         return name and email and phone and position
 
-
-    def is_complete(self):
-        return self.name is not None and self.position is not None
+    def dict(self):
+        """ Return class in dictionary format """
+        return {'name': self.name, 'email': self.email, 'position': self.position, 'phone': self.phone}
 
     def __repr__(self):
+        """ Print class in a pretty form """
         result = ''
         if self.name is not None:
             result += 'Name:{} '.format(self.name)
@@ -134,7 +139,9 @@ def get_contacts(root_node):
     """ Get all the contacts from our tree """
     clean_tree(root_node)
     roll_up(root_node)
-    return findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
+    all_nodes = findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
+    [n.contact.get_first() for n in all_nodes]
+    return [n.contact for n in all_nodes]
 
 
 def worth_it(html):
@@ -142,21 +149,41 @@ def worth_it(html):
     return re.match(r'[^@]+@[^@]+\.[^@]+', html.get_text(), flags=re.IGNORECASE)
 
 
-def scrape(website):
-    # Download website
+def get_all_pages(website, base, level=0):
+    """ Get all pages from a given website """
+
     html = requests.get(website).text
     site = BeautifulSoup(html, features='html.parser').find(name='body')
+    all_links = site.findAll('a', attrs={'href': re.compile('^/')})
+    if level == 1:
+        return ['{}{}'.format(base, link.get('href')) for link in all_links]
+    else:
+        for link in all_links:
+            return get_all_pages('{}{}'.format(website, link.get('href')), base=base, level=level+1)
 
-    if not worth_it(site):
-        return list()
 
-    # Walk webpage and create tree
-    root = AnyNode(contact=None)
-    walker(site, root)
-    return get_contacts(root)
+def scrape(website, log):
+    results = set()
+    for page in set(get_all_pages(website, website)):
+        # Download website
+        html = requests.get(page).text
+        site = BeautifulSoup(html, features='html.parser').find(name='body')
+
+        # If page has no emails, ignore
+        if worth_it(site):
+            log.debug('Parsing page: {}'.format(page))
+            # Walk webpage and create tree
+            root = AnyNode(contact=None)
+            walker(site, root)
+            found_contacts = get_contacts(root)
+            for contact in found_contacts:
+                log.debug('Found: {}'.format(contact))
+            results.update(found_contacts)
+    log.debug('Scraping complete')
+    return results
 
 
 if __name__ == '__main__':
-    res = scrape('http://artspace.org/staff')
+    res = scrape('http://artspace.org')
     for item in res:
         print(item)

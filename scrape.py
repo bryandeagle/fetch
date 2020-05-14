@@ -160,21 +160,31 @@ def get_contacts(root_node):
 
 
 def worth_it(html):
-    """ Search for an email address to determine to scrape or not """
-    return re.match(r'[^@]+@[^@]+\.[^@]+', html.get_text(), flags=re.IGNORECASE)
+    """ Search for an email or phone to determine to scrape or not """
+    text = html.get_text()
+    email = re.match(r'[^@]+@[^@]+\.[^@]+', text, flags=re.IGNORECASE)
+    phone = re.match(r'^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$', text, flags=re.IGNORECASE)
+    return email or phone
 
 
-def get_all_pages(website, base, log, level=0):
+def get_all_pages(website, log):
     """ Get all pages from a given website """
-    html = requests.get(website, headers=HEADERS).text
-    site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
-    all_links = site.findAll('a', attrs={'href': re.compile('^/')})
+    response = requests.get(website, headers=HEADERS)
+    site = BeautifulSoup(ignore_robots(response.text), features='html.parser').find(name='body')
+    all_links = site.findAll('a', attrs={'href': re.compile(r'^/|({})'.format(response.url))})
     log.debug('Page: {}. Links: {}'.format(website, [link.get('href') for link in all_links]))
-    if level == 1:
-        return ['{}{}'.format(base, link.get('href')) for link in all_links]
+
+    links = set()
+    for link in all_links:
+        if link.get('href').startswith('/'):
+            links.add('{}{}'.format(website, link.get('href')))
+        else:
+            links.add(link.get('href'))
+    if not links:
+        return {website}
     else:
-        for link in all_links:
-            return get_all_pages('{}{}'.format(website, link.get('href')), base, log, level=level+1)
+        links.add(website)
+        return links
 
 
 def ignore_robots(html):
@@ -186,13 +196,9 @@ def ignore_robots(html):
 
 def scrape(website, log):
     results = set()
-    all_pages = get_all_pages(website, website, log)
-    if all_pages is None:
-        all_pages = {'{}/'.format(website)}
-    else:
-        all_pages.append('{}/'.format(website))
+    all_pages = get_all_pages(website, log)
     log.debug('Pages: {}'.format(all_pages))
-    for page in set(all_pages):
+    for page in all_pages:
         # Download website
         html = requests.get(page, headers=HEADERS).text
         site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
@@ -227,6 +233,6 @@ def _setup_log(file_size):
 
 if __name__ == '__main__':
     log = _setup_log(file_size=5 * 1024 * 1024)
-    res = scrape('http://crossdevelopment.net', log)
+    res = scrape('http://danielcorp.com', log)
     for item in res:
         print(item)

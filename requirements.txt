@@ -2,3 +2,4 @@ bs4
 anytree
 flask
 requests
+pytest

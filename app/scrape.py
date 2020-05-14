@@ -167,13 +167,13 @@ def worth_it(html):
     return email or phone
 
 
-def get_all_pages(website, log):
+def get_all_pages(website, log=None):
     """ Get all pages from a given website """
     response = requests.get(website, headers=HEADERS)
     site = BeautifulSoup(ignore_robots(response.text), features='html.parser').find(name='body')
     all_links = site.findAll('a', attrs={'href': re.compile(r'^/|({})'.format(response.url))})
-    log.debug('Page: {}. Links: {}'.format(website, [link.get('href') for link in all_links]))
-
+    if log:
+        log.debug('Page: {}. Links: {}'.format(website, [link.get('href') for link in all_links]))
     links = set()
     for link in all_links:
         if link.get('href').startswith('/'):
@@ -194,25 +194,29 @@ def ignore_robots(html):
     return html
 
 
-def scrape(website, log):
+def scrape(website, log=None):
     results = set()
     all_pages = get_all_pages(website, log)
-    log.debug('Pages: {}'.format(all_pages))
+    if log:
+        log.debug('Pages: {}'.format(all_pages))
     for page in all_pages:
         # Download website
         html = requests.get(page, headers=HEADERS).text
         site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
         # If page has no emails, ignore
         if worth_it(site):
-            log.debug('Parsing page: {}'.format(page))
+            if log:
+                log.debug('Parsing page: {}'.format(page))
             # Walk webpage and create tree
             root = AnyNode(contact=None)
             walker(site, root)
             found_contacts = get_contacts(root)
             for contact in found_contacts:
-                log.debug('Found: {}'.format(contact))
+                if log:
+                    log.debug('Found: {}'.format(contact))
             results.update(found_contacts)
-    log.debug('Scraping complete')
+    if log:
+        log.debug('Scraping complete')
     return results
 
 

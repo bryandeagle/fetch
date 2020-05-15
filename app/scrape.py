@@ -71,13 +71,15 @@ class Contact(object):
 
 def render_tree(root_node):
     """ Print tree for debugging """
+    result = ''
     for pre, fill, node in RenderTree(root_node):
         if node.parent is None:
-            print('┬')
+            result += '┬\n'
         elif node.contact is None:
-            print('{}─┐'.format(pre[0:-1]))
+            result += '{}─┐\n'.format(pre[0:-1])
         else:
-            print('{}{}'.format(pre, node.contact))
+            result += '{}{}\n'.format(pre, node.contact)
+    return result
 
 
 def analyze(element):
@@ -149,10 +151,12 @@ def roll_up(root_node):
                 node.parent = None
 
 
-def get_contacts(root_node):
+def get_contacts(root_node, log=None):
     """ Get all the contacts from our tree """
+    log.debug(render_tree(root_node))
     clean_tree(root_node)
     roll_up(root_node)
+    log.debug(render_tree(root_node))
     all_nodes = findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
     [n.contact.get_names() for n in all_nodes]
     return [n.contact for n in all_nodes]
@@ -209,7 +213,7 @@ def scrape(website, log=None):
             # Walk webpage and create tree
             root = AnyNode(contact=None)
             walker(site, root)
-            found_contacts = get_contacts(root)
+            found_contacts = get_contacts(root, log)
             for contact in found_contacts:
                 if log:
                     log.info('Found: {}'.format(contact))

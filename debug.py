@@ -8,19 +8,20 @@ WEBSITE = 'http://danielcorp.com'
 
 def _setup_log(file_size):
     """ Set up rotating log file configuration """
+    log_level = DEBUG
     formatter = Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s',
                           datefmt='%Y-%m-%d %H:%M:%S')
     file_handler = handlers.RotatingFileHandler(filename=LOG_FILE,
                                                 maxBytes=file_size,
                                                 encoding='utf-8')
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(INFO)
+    file_handler.setLevel(log_level)
     logger = getLogger(__name__)
     logger.addHandler(file_handler)
     stream_handler = StreamHandler()
-    stream_handler.setLevel(INFO)
+    stream_handler.setLevel(log_level)
     logger.addHandler(stream_handler)
-    logger.setLevel(INFO)
+    logger.setLevel(log_level)
     return logger
 
 

@@ -6,6 +6,7 @@ from os import path
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 WEBSITE = 'http://danielcorp.com'
 
+
 def _setup_log(file_size):
     """ Set up rotating log file configuration """
     log_level = DEBUG

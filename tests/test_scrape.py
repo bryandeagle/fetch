@@ -15,7 +15,7 @@ def _setup_log():
 
 def test_links(log=None):
     """ Test ability to find links """
-    html = open('links.html', 'rt').read()
+    html = open('tests/links.html', 'rt').read()
     x = get_all_pages(html=html, url='http://example.com', log=log)
     if x != {'http://example.com', 'http://example.com/contact-us'}:
         raise SystemExit(1)
@@ -27,7 +27,7 @@ def test_scrape(log=None):
                            email='john.lennon@beatles.com',
                            phone='555-123-4567',
                            position='Chief Executive Officer')
-    html = open('contacts.html', 'rt').read()
+    html = open('tests/contacts.html', 'rt').read()
     result = scrape_page(html=html, log=log)[0]
     if not result.is_similar(test_contact) or \
             not test_contact.is_similar(result):

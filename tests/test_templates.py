@@ -1,7 +1,7 @@
 from jinja2 import Environment
 import os
 
-TEMPLATES_DIR = '../app/templates'
+TEMPLATES_DIR = 'app/templates'
 env = Environment()
 
 for file in os.listdir(TEMPLATES_DIR):

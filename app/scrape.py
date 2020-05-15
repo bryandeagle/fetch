@@ -82,32 +82,44 @@ def render_tree(root_node):
     return result
 
 
-def analyze(element):
+def analyze(element, log=None):
     """ Determines if HTML element is a name, phone number, email or position """
-    positions = {'development', 'senior', 'vice', 'president', 'director', 'administrator'
+    positions = {'development', 'senior', 'vice', 'president', 'director', 'administrator',
                  'manager', 'strategist', 'analyst', 'associate', 'assistant', 'bookkeeper',
-                 'chief', 'coo', 'cfo', 'cto', 'lead'}
+                 'chief', 'ceo', 'chair', 'chairman', 'coo', 'cfo', 'cto', 'lead'}
     if element.name not in [None, 'script']:
         text = ' '.join(element.find_all(text=True, recursive=False)).strip()
         if len(text) > 1:
             split_text = text.translate(str.maketrans('', '', string.punctuation)).split()
             split_text = [x.lower() for x in split_text]
             if re.match(r'^[^@]+@[^@]+\.[^@]+$', text, flags=re.IGNORECASE):
+                if log:
+                    log.debug('Detected email in: {}'.format(text))
                 return Contact(email=text.lower())
             elif len(split_text) < 10 and len(set(split_text) & positions) > 0:
+                if log:
+                    log.debug('Detected position in: {}'.format(split_text))
                 return Contact(position=text.title())
-            elif re.match(r'^[A-Z][a-z\'-]+(\s[A-Z][a-z\'-]+)?\s[A-Z][a-z\'-]+$', text, flags=re.IGNORECASE):
+            elif re.match(r'^[A-Z][a-z\'-]+(\s[A-Z][a-z\'\.-]+)?\s[A-Z][a-z\'-]+$', text, flags=re.IGNORECASE):
+                if log:
+                    log.debug('Detected name in: {}'.format(text))
                 return Contact(name=text.title())
             elif re.match(r'^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$', text, flags=re.IGNORECASE):
                 noparen = re.sub(r'[\(\)]', '', text)
+                if log:
+                    log.debug('Detected phone in: {}'.format(text))
                 return Contact(phone=re.sub(r'[-\.]', '-', noparen))
+            else:
+                if log:
+                    log.debug(set(positions))
+                    log.debug('Detected nothing in: {} ({})'.format(text, set(split_text)))
 
 
-def walker(soup, node):
+def walker(soup, node, log=None):
     """ Traverses the bs4 tree and constructs a new one """
     if soup.name is not None:
-        new_node = AnyNode(parent=node, contact=analyze(soup))
-        [walker(child, new_node) for child in soup.children]
+        new_node = AnyNode(parent=node, contact=analyze(soup, log=log))
+        [walker(child, new_node, log=log) for child in soup.children]
 
 
 def tighten(node):
@@ -189,14 +201,10 @@ def get_all_pages(website=None, log=None, html=None, url=None):
             links.add('{}{}'.format(url, link.get('href')))
         else:
             links.add(link.get('href'))
-    if not links:
-        return {url}
-    else:
-        links.add(url)
-        filtered = filter_links(links)
-        if log:
-            log.debug('{} Filtered to {}'.format(links, filtered))
-        return filtered
+    filtered = filter_links(links)
+    if log:
+        log.debug('{} Filtered to {}'.format(links, filtered))
+    return filtered
 
 
 def filter_links(links):
@@ -234,18 +242,21 @@ def scrape_page(website=None, html=None, log=None):
             log.info('Parsing page: {}'.format(website))
         # Walk webpage and create tree
         root = AnyNode(contact=None)
-        walker(site, root)
+        walker(site, root, log)
         found_contacts = get_contacts(root, log)
         for contact in found_contacts:
             if log:
                 log.info('Found: {}'.format(contact))
         return found_contacts
+    return set()
 
 
 def scrape(website, log=None):
     """ Main function to scrape all pages """
-    results = set()
-    all_pages = get_all_pages(website=website, log=log)
+    # Trying some new things
+    response = requests.get(website, headers=HEADERS)
+    results = scrape_page(html=response.text, log=log)
+    all_pages = get_all_pages(html=response.text, log=log, url=response.url)
     if log:
         log.debug('Pages: {}'.format(all_pages))
     for page in all_pages:

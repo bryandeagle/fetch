@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file, Response, render_template
-from logging import handlers, Formatter, getLogger, INFO
+from logging import handlers, Formatter, getLogger, INFO, DEBUG
 from .scrape import scrape
 from os import path
 import json
@@ -40,16 +40,17 @@ def json_to_csv(json_txt, website):
 
 def _setup_log():
     """ Set up rotating log file configuration """
+    log_level = DEBUG
     formatter = Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s',
                           datefmt='%Y-%m-%d %H:%M:%S')
     file_handler = handlers.RotatingFileHandler(filename=LOG_FILE,
                                                 maxBytes=5*1024*1024,
                                                 encoding='utf-8')
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(INFO)
+    file_handler.setLevel(log_level)
     logger = getLogger(__name__)
     logger.addHandler(file_handler)
-    logger.setLevel(INFO)
+    logger.setLevel(log_level)
     return logger
 
 

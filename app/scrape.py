@@ -192,8 +192,19 @@ def get_all_pages(website=None, log=None, html=None, url=None):
     if not links:
         return {url}
     else:
+
         links.add(url)
-        return links
+        filtered = filter_links(links)
+        if log:
+            log.debug('{} Filtered to {}'.format(links, filtered))
+        return filtered
+
+
+def filter_links(links):
+    """ Filter known non-contact links """
+    # return links
+    return set([link for link in links if re.match(
+        r'.*(about|team|people|staff|leader|manage|executive).*', link)])
 
 
 def filter_contacts(contacts):

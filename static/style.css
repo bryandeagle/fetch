@@ -49,3 +49,6 @@ table.top {
 a.error {
     min-width: 150px;
 }
+h2.title {
+    padding-right: 1em;
+}

@@ -52,3 +52,8 @@ a.error {
 h2.title {
     padding-right: 1em;
 }
+
+.loading {
+  display: none;
+  padding-top: 40px;
+}

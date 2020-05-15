@@ -8,13 +8,20 @@
     <link href="/static/litera.css" rel="stylesheet">
     <link href="/static/style.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/b6e859a744.js" crossorigin="anonymous"></script>
+    <script>
+      function loading() {
+        document.getElementById('hide').style.display = 'none';
+        document.getElementById('show').style.display = 'block';
+      }
+    </script>
   </head>
   <body class="text-center simple">
-    <form class="form-info" method="post" action="/">
+    <h3 id="show" class="h3 mb-3 font-weight-normal loading">Loading...</h3>
+    <form id="hide" class="form-info" method="post" action="/">
       <img src="/static/terrier.png" alt="" width="300">
       <label for="website" class="sr-only">Website</label>
       <input type="text" id="website" name="website" class="form-control" placeholder="http://petsmart.com" required autofocus>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Fetch Contacts</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="loading()">Fetch Contacts</button>
     </form>
   </body>
 </html>

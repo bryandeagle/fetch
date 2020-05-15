@@ -53,7 +53,7 @@ def _setup_log(file_size):
     return logger
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../static')
 log = _setup_log(file_size=5*1024*1024)
 
 

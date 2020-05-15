@@ -10,8 +10,10 @@
     <script src="https://kit.fontawesome.com/b6e859a744.js" crossorigin="anonymous"></script>
     <script>
       function loading() {
-        document.getElementById('hide').style.display = 'none';
-        document.getElementById('show').style.display = 'block';
+        if (document.getElementById('website').value != '') {
+          document.getElementById('hide').style.display = 'none';
+          document.getElementById('show').style.display = 'block';
+        }
       }
     </script>
   </head>

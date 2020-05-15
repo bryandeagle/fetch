@@ -17,7 +17,8 @@ def test_links(log=None):
     """ Test ability to find links """
     html = open('tests/links.html', 'rt').read()
     x = get_all_pages(html=html, url='http://example.com', log=log)
-    if x != {'http://example.com', 'http://example.com/contact-us'}:
+    print(x)
+    if x != {'http://example.com/contact-us'}:
         raise SystemExit(1)
 
 

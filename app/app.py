@@ -1,6 +1,6 @@
 from flask import Flask, request, send_file, Response, render_template
 from logging import handlers, Formatter, getLogger, INFO
-from .scrape import scrape
+from scrape import scrape
 from os import path
 import json
 

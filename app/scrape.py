@@ -246,4 +246,4 @@ def scrape(website, log=None):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return filter_contacts(results)
+    return results  # filter_contacts

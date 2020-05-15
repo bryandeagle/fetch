@@ -4,3 +4,4 @@ flask
 requests
 pytest
 gunicorn
+jinja2

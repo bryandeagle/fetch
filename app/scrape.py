@@ -143,12 +143,13 @@ def roll_up(root_node):
     while root_node.leaves != leaf_nodes:
         leaf_nodes = root_node.leaves
         for node in leaf_nodes:
-            if node.parent.contact is None:
-                node.parent.contact = node.contact
-                node.parent = None
-            elif node.contact.is_similar(node.parent.contact):
-                node.parent.contact.merge(node.contact)
-                node.parent = None
+            if node.parent is not None:
+                if node.parent.contact is None:
+                    node.parent.contact = node.contact
+                    node.parent = None
+                elif node.contact.is_similar(node.parent.contact):
+                    node.parent.contact.merge(node.contact)
+                    node.parent = None
 
 
 def get_contacts(root_node, log=None):
@@ -172,23 +173,26 @@ def worth_it(html):
     return email or phone
 
 
-def get_all_pages(website, log=None):
+def get_all_pages(website=None, log=None, html=None, url=None):
     """ Get all pages from a given website """
-    response = requests.get(website, headers=HEADERS)
-    site = BeautifulSoup(ignore_robots(response.text), features='html.parser').find(name='body')
-    all_links = site.findAll('a', attrs={'href': re.compile(r'^/|({})'.format(response.url))})
+    if website:
+        response = requests.get(website, headers=HEADERS)
+        html = response.text
+        url = response.url
+    site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
+    all_links = site.findAll('a', attrs={'href': re.compile(r'^/|({})'.format(url))})
     if log:
-        log.debug('Page: {}. Links: {}'.format(website, [link.get('href') for link in all_links]))
+        log.debug('Page: {}. Links: {}'.format(url, [link.get('href') for link in all_links]))
     links = set()
     for link in all_links:
         if link.get('href').startswith('/'):
-            links.add('{}{}'.format(website, link.get('href')))
+            links.add('{}{}'.format(url, link.get('href')))
         else:
             links.add(link.get('href'))
     if not links:
-        return {website}
+        return {url}
     else:
-        links.add(website)
+        links.add(url)
         return links
 
 
@@ -199,26 +203,34 @@ def ignore_robots(html):
     return html
 
 
+def scrape_page(website=None, html=None, log=None):
+    """ Scrape a single page """
+    if website:  # Download website
+        html = requests.get(website, headers=HEADERS).text
+    site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
+    # If page has no emails, ignore
+    if worth_it(site):
+        if log and website:
+            log.info('Parsing page: {}'.format(website))
+        # Walk webpage and create tree
+        root = AnyNode(contact=None)
+        walker(site, root)
+        found_contacts = get_contacts(root, log)
+        for contact in found_contacts:
+            if log:
+                log.info('Found: {}'.format(contact))
+        return found_contacts
+
+
 def scrape(website, log=None):
+    """ Main function to scrape all pages """
     results = set()
-    all_pages = get_all_pages(website, log)
+    all_pages = get_all_pages(website=website, log=log)
     if log:
         log.debug('Pages: {}'.format(all_pages))
     for page in all_pages:
-        # Download website
-        html = requests.get(page, headers=HEADERS).text
-        site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
-        # If page has no emails, ignore
-        if worth_it(site):
-            if log:
-                log.info('Parsing page: {}'.format(page))
-            # Walk webpage and create tree
-            root = AnyNode(contact=None)
-            walker(site, root)
-            found_contacts = get_contacts(root, log)
-            for contact in found_contacts:
-                if log:
-                    log.info('Found: {}'.format(contact))
+        found_contacts = scrape_page(website=page, log=log)
+        if found_contacts:
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')

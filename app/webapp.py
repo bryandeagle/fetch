@@ -38,12 +38,12 @@ def json_to_csv(json_txt, website):
     return text
 
 
-def _setup_log(file_size):
+def _setup_log():
     """ Set up rotating log file configuration """
     formatter = Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s',
                           datefmt='%Y-%m-%d %H:%M:%S')
     file_handler = handlers.RotatingFileHandler(filename=LOG_FILE,
-                                                maxBytes=file_size,
+                                                maxBytes=5*1024*1024,
                                                 encoding='utf-8')
     file_handler.setFormatter(formatter)
     file_handler.setLevel(INFO)
@@ -54,7 +54,7 @@ def _setup_log(file_size):
 
 
 app = Flask(__name__, static_folder='../static')
-log = _setup_log(file_size=5*1024*1024)
+log = _setup_log()
 
 
 @app.route('/log')

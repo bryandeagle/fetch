@@ -60,7 +60,7 @@ log = _setup_log()
 @app.route('/log')
 def get_log():
     """ Sends the log file for debug """
-    return send_file(LOG_FILE, as_attachment=True)
+    return send_file(path.join('..', LOG_FILE), as_attachment=True)
 
 
 @app.route('/download', methods=['POST'])
@@ -93,7 +93,3 @@ def root():
     except Exception as e:
         log.error(e)
         return render_template('error.html', website=url)
-
-
-if __name__ == "__main__":
-    app.run()

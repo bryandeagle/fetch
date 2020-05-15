@@ -196,6 +196,18 @@ def get_all_pages(website=None, log=None, html=None, url=None):
         return links
 
 
+def filter_contacts(contacts):
+    """ Filter known bad contacts """
+    contacts_list = list(contacts)
+    email_matches = [r'^info@', r'^support@']
+    name_matches = [r'^The\s']
+    for email in email_matches:
+        contacts = [c for c in contacts_list if not re.match(email, c.email)]
+    for name in name_matches:
+        contacts = [c for c in contacts_list if not re.match(name, c.name)]
+    return set(contacts_list)
+
+
 def ignore_robots(html):
     """ Ignore pesky tags """
     html = html.replace('<!--googleoff: index-->', '')
@@ -234,4 +246,4 @@ def scrape(website, log=None):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return results
+    return filter_contacts(results)

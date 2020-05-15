@@ -5,3 +5,4 @@ requests
 pytest
 gunicorn
 jinja2
+nltk

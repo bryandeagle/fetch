@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from os import path
 import requests
 import string
+import nltk
 import re
 
 
@@ -20,6 +21,7 @@ class Contact(object):
         self.position = position
         self.first = None
         self.last = None
+        self.hit = False
 
     def get_names(self):
         split = self.name.split()
@@ -53,11 +55,14 @@ class Contact(object):
                 'name': self.name,
                 'email': self.email,
                 'position': self.position,
-                'phone': self.phone}
+                'phone': self.phone,
+                'hit': self.hit}
 
     def __repr__(self):
         """ Print class in a pretty form """
         result = ''
+        if self.hit:
+            result += '[HIT]'
         if self.name is not None:
             result += 'Name:{} '.format(self.name)
         if self.email is not None:
@@ -224,6 +229,14 @@ def filter_contacts(contacts):
     return set(contacts_list)
 
 
+def tag_contacts(contacts):
+    """ Tag contacts of interest """
+    for contact in contacts:
+        if re.match('.*development.*', contact.position, flags=re.IGNORECASE):
+            contact.hit = True
+    return sorted(contacts, key=lambda item: item.hit, reverse=True)
+
+
 def ignore_robots(html):
     """ Ignore pesky tags """
     html = html.replace('<!--googleoff: index-->', '')
@@ -265,4 +278,4 @@ def scrape(website, log=None):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return filter_contacts(results)
+    return tag_contacts(filter_contacts(results))

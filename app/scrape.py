@@ -199,12 +199,10 @@ def get_all_pages(website=None, log=None, html=None, url=None):
 def filter_contacts(contacts):
     """ Filter known bad contacts """
     contacts_list = list(contacts)
-    email_matches = [r'^info@', r'^support@']
-    name_matches = [r'^The\s']
-    for email in email_matches:
-        contacts = [c for c in contacts_list if not re.match(email, c.email)]
-    for name in name_matches:
-        contacts = [c for c in contacts_list if not re.match(name, c.name)]
+    for email in [r'^info@', r'^support@']:
+        contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]
+    for name in [r'^The\s']:
+        contacts_list = [c for c in contacts_list if c.name is None or not re.match(name, c.name)]
     return set(contacts_list)
 
 
@@ -246,4 +244,4 @@ def scrape(website, log=None):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return results  # filter_contacts
+    return filter_contacts(results)

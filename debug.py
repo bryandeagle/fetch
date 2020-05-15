@@ -1,4 +1,4 @@
-from logging import handlers, Formatter, getLogger, DEBUG
+from logging import handlers, Formatter, getLogger, DEBUG, INFO, StreamHandler
 from app import scrape
 from os import path
 
@@ -14,15 +14,16 @@ def _setup_log(file_size):
                                                 maxBytes=file_size,
                                                 encoding='utf-8')
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(DEBUG)
+    file_handler.setLevel(INFO)
     logger = getLogger(__name__)
     logger.addHandler(file_handler)
-    logger.setLevel(DEBUG)
+    stream_handler = StreamHandler()
+    stream_handler.setLevel(INFO)
+    logger.addHandler(stream_handler)
+    logger.setLevel(INFO)
     return logger
 
 
 if __name__ == '__main__':
     log = _setup_log(file_size=5 * 1024 * 1024)
     result = scrape(WEBSITE, log)
-    for item in result:
-        print(item)

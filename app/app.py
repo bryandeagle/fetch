@@ -1,5 +1,5 @@
 from flask import Flask, request, send_file, Response, render_template
-from logging import handlers, Formatter, getLogger, DEBUG
+from logging import handlers, Formatter, getLogger, INFO
 from .scrape import scrape
 from os import path
 import json
@@ -46,10 +46,10 @@ def _setup_log(file_size):
                                                 maxBytes=file_size,
                                                 encoding='utf-8')
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(DEBUG)
+    file_handler.setLevel(INFO)
     logger = getLogger(__name__)
     logger.addHandler(file_handler)
-    logger.setLevel(DEBUG)
+    logger.setLevel(INFO)
     return logger
 
 
@@ -79,7 +79,7 @@ def index():
 
 @app.route('/', methods=['POST'])
 def root():
-    log.debug('Received request for {}'.format(request.form['website']))
+    log.info('Received request for {}'.format(request.form['website']))
     url = _sanitize(request.form['website'], log)
     try:
         contacts = scrape(url, log)

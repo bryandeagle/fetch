@@ -37,16 +37,17 @@ WantedBy=multi-user.target
 ## Apache Reverse Proxy Config
 ```
 <VirtualHost *:80>
-    Alias "/static/" "/opt/contacts/static"
+    Alias "/static" "/opt/contacts/static"
 
     <Directory "/opt/contacts/static">
-        Order allow,deny
-        Allow from all
+        Require all granted
     </Directory>
 
     ProxyPreserveHost off
     ProxyRequests off
     ProxyPass / http://localhost:5000/
     ProxyPassReverse / http://localhost:5000/
+
+    ErrorLog /var/log/httpd/contacts.log
 </VirtualHost>
 ```

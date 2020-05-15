@@ -3,3 +3,4 @@ anytree
 flask
 requests
 pytest
+gunicorn

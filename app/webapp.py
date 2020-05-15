@@ -84,6 +84,8 @@ def root():
     try:
         contacts = scrape(url, log)
         json_txt = json.dumps([c.dict() for c in contacts])
+        if not contacts:
+            return render_template('empty.html', website=url)
         return render_template('results.html',
                                website=_display(url),
                                results=contacts,

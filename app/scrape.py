@@ -153,10 +153,12 @@ def roll_up(root_node):
 
 def get_contacts(root_node, log=None):
     """ Get all the contacts from our tree """
-    log.debug(render_tree(root_node))
+    if log:
+        log.debug(render_tree(root_node))
     clean_tree(root_node)
     roll_up(root_node)
-    log.debug(render_tree(root_node))
+    if log:
+        log.debug(render_tree(root_node))
     all_nodes = findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
     [n.contact.get_names() for n in all_nodes]
     return [n.contact for n in all_nodes]

@@ -189,7 +189,7 @@ def get_contacts(root_node, log=None):
         log.debug(render_tree(root_node))
     all_nodes = findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
     [n.contact.get_names() for n in all_nodes]
-    return [n.contact for n in all_nodes]
+    return set([n.contact for n in all_nodes])
 
 
 def worth_it(html):
@@ -197,7 +197,7 @@ def worth_it(html):
     text = html.get_text()
     email = re.match(r'[^@]+@[^@]+\.[^@]+', text, flags=re.IGNORECASE)
     phone = re.match(r'^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$', text, flags=re.IGNORECASE)
-    return email or phone
+    return email or phone or True
 
 
 def get_all_pages(website=None, log=None, html=None, url=None):

@@ -1,3 +1,4 @@
+wheel
 bs4
 anytree
 flask

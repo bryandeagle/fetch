@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from os import path
 import requests
 import string
-from nltk.parse import CoreNLPParser
+#from nltk.parse import CoreNLPParser
 import re
 
 
@@ -89,9 +89,20 @@ def render_tree(root_node):
 
 def analyze(element, log=None):
     """ Determines if HTML element is a name, phone number, email or position """
-    positions = {'development', 'senior', 'vice', 'president', 'director', 'administrator',
-                 'manager', 'strategist', 'analyst', 'associate', 'assistant', 'bookkeeper',
-                 'chief', 'ceo', 'chair', 'chairman', 'coo', 'cfo', 'cto', 'lead'}
+
+    positions = {'accountant', 'administrator', 'analyst', 'architect', 'assistant',
+                 'associate', 'auditor', 'bookkeeper', 'broker', 'buyer', 'cco', 'cdo',
+                 'ceo', 'cfo', 'chro', 'cio', 'cmo', 'coo', 'cpo', 'cto', 'chief', 'clerk',
+                 'collector', 'consultant', 'controller', 'coordinator', 'copywriter',
+                 'designer', 'developer', 'director', 'drafter', 'engineer', 'executive',
+                 'foreman', 'founder', 'head', 'lead', 'leader', 'manager', 'master',
+                 'member', 'officer', 'organizer', 'overseer', 'owner', 'partner',
+                 'planner', 'president', 'principal', 'producer', 'programmer',
+                 'proprietor', 'receptionist', 'representative', 'researcher', 'resources',
+                 'risk manager', 'salesperson', 'scientist', 'secretary', 'specialist',
+                 'staff', 'strategist', 'superintendent', 'supervisor', 'support',
+                 'technician', 'vice', 'worker', 'chair', 'chairman', 'fellow'}
+
     if element.name not in [None, 'script']:
         text = ' '.join(element.find_all(text=True, recursive=False)).strip()
         if len(text) > 1:
@@ -231,9 +242,10 @@ def filter_contacts(contacts):
 
 def is_person(name):
     """ Determine if a name belongs to a person """
-    ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
-    tags = [x[1] for x in ner_tagger.tag(name.split())]
-    return 'PERSON' in tags
+    return True
+    #ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
+    #tags = [x[1] for x in ner_tagger.tag(name.split())]
+    #return 'PERSON' in tags
 
 
 def tag_contacts(contacts):

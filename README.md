@@ -27,8 +27,8 @@ After=network.target
 User=bryan
 Group=apache
 WorkingDirectory=/opt/contacts
-Environment="PATH=/opt/contacts/venv/bin"
-ExecStart=/opt/contacts/venv/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 -m 007 wsgi:app
+Environment="PATH=/opt/contacts/env/bin"
+ExecStart=/opt/contacts/env/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 -m 007 wsgi:app
 
 [Install]
 WantedBy=multi-user.target

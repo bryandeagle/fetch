@@ -29,7 +29,7 @@ def test_scrape(log=None):
                            phone='555-123-4567',
                            position='Chief Executive Officer')
     html = open('tests/contacts.html', 'rt').read()
-    result = scrape_page(html=html, log=log)[0]
+    result = list(scrape_page(html=html, log=log))[0]
     if not result.is_similar(test_contact) or \
             not test_contact.is_similar(result):
         raise SystemExit(1)

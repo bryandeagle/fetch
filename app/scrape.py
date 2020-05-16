@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from os import path
 import requests
 import string
-import nltk
+from nltk.parse import CoreNLPParser
 import re
 
 
@@ -221,12 +221,19 @@ def filter_links(links):
 
 def filter_contacts(contacts):
     """ Filter known bad contacts """
-    contacts_list = list(contacts)
+    contacts_list = list([c for c in contacts if c.name])
+    contacts_list = [c for c in contacts_list if is_person(c.name)]
+
     for email in [r'^info@', r'^support@']:
         contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]
-    for name in [r'^The\s']:
-        contacts_list = [c for c in contacts_list if c.name is None or not re.match(name, c.name)]
     return set(contacts_list)
+
+
+def is_person(name):
+    """ Determine if a name belongs to a person """
+    ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
+    tags = [x[1] for x in ner_tagger.tag(name.split())]
+    return 'PERSON' in tags
 
 
 def tag_contacts(contacts):

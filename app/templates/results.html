@@ -28,6 +28,7 @@
           <tr>
             <th scope="col">First Name</th>
             <th scope="col">Last Name</th>
+            <th scope="col">Dev</th>
             <th scope="col">Position</th>
             <th scope="col">Email</th>
             <th scope="col">Phone</th>
@@ -38,6 +39,7 @@
           <tr {% if result.hit %} class="table-success" {% endif %} >
             <td>{{ result.first }}</td>
             <td>{{ result.last }}</td>
+            <td>{% if result.hit %} <i class="fas fa-flag"></i> {% endif %}</td>
             <td>{{ result.position }}</td>
             <td>{{ result.email }}</td>
             <td>{{ result.phone }}</td>

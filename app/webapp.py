@@ -93,6 +93,8 @@ def root():
     url = _sanitize(request.form['website'], log)
     try:
         contacts = scrape(website=url, log=log, ai=AI)
+        if log:
+            log.info('{} results found'.format(len(contacts)))
         data = json.dumps([c.dict() for c in contacts])
         flagged = json.dumps([c.dict() for c in contacts if c.hit])
         if not contacts:

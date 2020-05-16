@@ -127,7 +127,7 @@ def analyze(element, log=None):
                 return Contact(phone=re.sub(r'[-\.]', '-', noparen))
             else:
                 if log:
-                    log.debug('Detected nothing in: {} ({})'.format(text, set(split_text)))
+                    log.debug('Detected nothing in: {} ({})'.format(text, text))
 
 
 def walker(soup, node, log=None):

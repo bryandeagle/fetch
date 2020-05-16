@@ -97,7 +97,7 @@ def analyze(element, log=None):
                  'designer', 'developer', 'director', 'drafter', 'engineer', 'executive',
                  'foreman', 'founder', 'head', 'lead', 'leader', 'manager', 'master',
                  'member', 'officer', 'organizer', 'overseer', 'owner', 'partner',
-                 'planner', 'president', 'principal', 'producer', 'programmer',
+                 'planner', 'president', 'producer', 'programmer',
                  'proprietor', 'receptionist', 'representative', 'researcher', 'resources',
                  'risk manager', 'salesperson', 'scientist', 'secretary', 'specialist',
                  'staff', 'strategist', 'superintendent', 'supervisor', 'support',

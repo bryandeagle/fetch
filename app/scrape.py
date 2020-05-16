@@ -127,7 +127,6 @@ def analyze(element, log=None):
                 return Contact(phone=re.sub(r'[-\.]', '-', noparen))
             else:
                 if log:
-                    log.debug(set(positions))
                     log.debug('Detected nothing in: {} ({})'.format(text, set(split_text)))
 
 
@@ -243,8 +242,9 @@ def filter_contacts(contacts, ai=False):
 def is_person(name):
     """ Determine if a name belongs to a person """
     ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
-    tags = [x[1] for x in ner_tagger.tag(name.split())]
-    return 'PERSON' in tags
+    split_name = [name.split()[0], name.split()[-1]]
+    tags = [x[1] for x in ner_tagger.tag(split_name)]
+    return set(tags) == {'PERSON'}
 
 
 def tag_contacts(contacts):

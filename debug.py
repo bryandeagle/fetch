@@ -4,7 +4,7 @@ from os import path
 
 
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
-WEBSITE = 'http://danielcorp.com'
+WEBSITE = 'https://abbydev.net'
 
 
 def _setup_log():

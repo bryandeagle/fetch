@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from os import path
 import requests
 import string
-#from nltk.parse import CoreNLPParser
+from nltk.parse import CoreNLPParser
 import re
 
 
@@ -242,10 +242,9 @@ def filter_contacts(contacts):
 
 def is_person(name):
     """ Determine if a name belongs to a person """
-    return True
-    #ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
-    #tags = [x[1] for x in ner_tagger.tag(name.split())]
-    #return 'PERSON' in tags
+    ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
+    tags = [x[1] for x in ner_tagger.tag(name.split())]
+    return 'PERSON' in tags
 
 
 def tag_contacts(contacts):

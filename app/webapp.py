@@ -95,13 +95,12 @@ def root():
         contacts = scrape(website=url, log=log, ai=AI)
         data = json.dumps([c.dict() for c in contacts])
         flagged = json.dumps([c.dict() for c in contacts if c.hit])
-        if len(contacts) == 0:
+        if not contacts:
             return render_template('empty.html', website=url)
         return render_template('results.html',
                                website=_display(url),
                                results=contacts,
-                               data=data,
-                               flagged=flagged)
+                               data=data, flagged=flagged)
     except Exception as e:
         log.error(e)
         return render_template('error.html', website=url)

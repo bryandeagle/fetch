@@ -18,7 +18,7 @@ def test_links(log=None):
     html = open('tests/links.html', 'rt').read()
     x = get_all_pages(html=html, url='http://example.com', log=log)
     print(x)
-    if x != {'http://example.com/contact-us'}:
+    if x != {'https://www.bostonrealestate.com'}:
         raise SystemExit(1)
 
 

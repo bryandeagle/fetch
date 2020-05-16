@@ -16,11 +16,12 @@
         <td class="text-right">
           <form method="post">
             <input type="hidden" name="website" value="{{ website }}">
-            <input type="hidden" name="data" value="{{ data }}" formaction="/download">
-            <input type="hidden" name="flagged" value="{{ flagged }}" formaction="/flagged">
+            <input type="hidden" name="data" value="{{ data }}">
+            <input type="hidden" name="flagged" value="{{ flagged }}" >
             <a class="btn btn-primary return" href="/"><i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back</a>
             <a class="btn btn-danger return" href="mailto:bryan@dea.gl?subject=Fetch Failed on {{ website }}"><i class="fas fa-bug"></i>&nbsp;&nbsp;Report</a>
-            <button class="btn btn-success download" type="submit"><i class="fas fa-download"></i>&nbsp;&nbsp;CSV</button>
+            <button class="btn btn-success download" type="submit" formaction="/download"><i class="fas fa-download"></i>&nbsp;&nbsp;All</button>
+            <button class="btn btn-success download" type="submit" formaction="/flagged"><i class="fas fa-download"></i>&nbsp;&nbsp;Flagged</button>
           </form>
         </td>
       </table>

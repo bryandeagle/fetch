@@ -14,9 +14,10 @@
       <table class="top">
         <td class="text-left"><h2 class="pr-1">{{ website }}</h2></td>
         <td class="text-right">
-          <form method="post" action="/download">
+          <form method="post">
             <input type="hidden" name="website" value="{{ website }}">
-            <input type="hidden" name="data" value="{{ json }}">
+            <input type="hidden" name="data" value="{{ data }}" formaction="/download">
+            <input type="hidden" name="flagged" value="{{ flagged }}" formaction="/flagged">
             <a class="btn btn-primary return" href="/"><i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Back</a>
             <a class="btn btn-danger return" href="mailto:bryan@dea.gl?subject=Fetch Failed on {{ website }}"><i class="fas fa-bug"></i>&nbsp;&nbsp;Report</a>
             <button class="btn btn-success download" type="submit"><i class="fas fa-download"></i>&nbsp;&nbsp;CSV</button>

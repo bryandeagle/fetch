@@ -72,6 +72,14 @@ def download():
                     headers={"Content-disposition": "attachment; filename=contacts.csv"})
 
 
+@app.route('/flagged', methods=['POST'])
+def flagged():
+    """ Returns CSV file """
+    data = json_to_csv(request.form['flagged'], request.form['website'])
+    return Response(data, mimetype="text/csv",
+                    headers={"Content-disposition": "attachment; filename=contacts.csv"})
+
+
 @app.route('/')
 def index():
     """ Returns static index document """
@@ -84,13 +92,15 @@ def root():
     url = _sanitize(request.form['website'], log)
     try:
         contacts = scrape(url, log)
-        json_txt = json.dumps([c.dict() for c in contacts])
+        data = json.dumps([c.dict() for c in contacts])
+        flagged = json.dumps([c.dict() for c in contacts if c.hit])
         if len(contacts) == 0:
             return render_template('empty.html', website=url)
         return render_template('results.html',
                                website=_display(url),
                                results=contacts,
-                               json=json_txt)
+                               data=data,
+                               flagged=flagged)
     except Exception as e:
         log.error(e)
         return render_template('error.html', website=url)

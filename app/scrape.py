@@ -97,7 +97,7 @@ def analyze(element, log=None):
                  'designer', 'developer', 'director', 'drafter', 'engineer', 'executive',
                  'foreman', 'founder', 'head', 'lead', 'leader', 'manager', 'master',
                  'member', 'officer', 'organizer', 'overseer', 'owner', 'partner',
-                 'planner', 'president', 'producer', 'programmer',
+                 'planner', 'president', 'producer', 'programmer', 'development',
                  'proprietor', 'receptionist', 'representative', 'researcher', 'resources',
                  'risk manager', 'salesperson', 'scientist', 'secretary', 'specialist',
                  'staff', 'strategist', 'superintendent', 'supervisor', 'support',
@@ -230,11 +230,11 @@ def filter_links(links):
         r'.*(about|team|people|staff|leader|manage|executive|contact).*', link)])
 
 
-def filter_contacts(contacts):
+def filter_contacts(contacts, ai=False):
     """ Filter known bad contacts """
     contacts_list = list([c for c in contacts if c.name])
-    contacts_list = [c for c in contacts_list if is_person(c.name)]
-
+    if ai:
+        contacts_list = [c for c in contacts_list if is_person(c.name)]
     for email in [r'^info@', r'^support@']:
         contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]
     return set(contacts_list)
@@ -282,7 +282,7 @@ def scrape_page(website=None, html=None, log=None):
     return set()
 
 
-def scrape(website, log=None):
+def scrape(website, log=None, ai=False):
     """ Main function to scrape all pages """
     # Trying some new things
     response = requests.get(website, headers=HEADERS)
@@ -296,4 +296,4 @@ def scrape(website, log=None):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return tag_contacts(filter_contacts(results))
+    return tag_contacts(filter_contacts(results, ai))

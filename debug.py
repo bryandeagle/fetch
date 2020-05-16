@@ -28,4 +28,4 @@ def _setup_log():
 
 if __name__ == '__main__':
     log = _setup_log()
-    result = scrape(WEBSITE, log)
+    result = scrape(website=WEBSITE, log=log, ai=False)

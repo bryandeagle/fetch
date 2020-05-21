@@ -4,7 +4,7 @@ from os import path
 
 
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
-WEBSITE = 'https://duwestrealty.com/about/'
+WEBSITE = 'http://www.bierbrierdevelopment.com/'
 
 
 def _setup_log():
@@ -30,3 +30,5 @@ if __name__ == '__main__':
     log = _setup_log()
     result = scrape(website=WEBSITE, log=log, ai=False)
     print('{} Results Found'.format(len(result)))
+    for res in result:
+        print(result)

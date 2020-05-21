@@ -5,7 +5,7 @@ from os import path
 import json
 
 
-AI = True
+AI = False
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 
 

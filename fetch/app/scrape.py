@@ -266,7 +266,7 @@ def scrape_page(website=None, html=None):
         walker(site, root)
         found_contacts = get_contacts(root)
         for contact in found_contacts:
-            log.info('Found: {}'.format(contact))
+            log.info('  Found: {}'.format(contact))
         return found_contacts
     return set()
 

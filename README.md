@@ -1,6 +1,6 @@
 Fetch
 =====
-Flask App to Scrape Contact Information from Given Website!
+Flask App to Scrape Contact Information from Given Website
 
 ## Installing
 ```

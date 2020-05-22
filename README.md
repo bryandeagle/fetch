@@ -16,59 +16,34 @@ python -m pytest tests/
 
 # Deploying
 
-## Gunicorn Service Config
+## Build & Run Flask Docker Container
 ```
-[Unit]
-Description=Gunicorn instance to serve contacts
-After=network.target
-
-[Service]
-User=bryan
-Group=apache
-WorkingDirectory=/opt/contacts
-Environment="PATH=/opt/contacts/env/bin"
-ExecStart=/opt/contacts/env/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 -m 007 wsgi:app
-
-[Install]
-WantedBy=multi-user.target
-```
-## NER Service Config
-```
-[Unit]
-Description=Stanford NER Server
-After=network.target
-
-[Service]
-User=bryan
-Group=bryan
-WorkingDirectory=/opt/ner
-ExecStart=java -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -preload ner -annotators ner -status_port 9000 -port 9000 -timeout 15000
-
-[Install]
-WantedBy=multi-user.target
+docker rm -f fetch
+docker build -t deagle/fetch:stable .
+docker run --init --name="fetch" --network="fetch-net" --restart always -d -p 5200:5000 deagle/fetch:stable
 ```
 
-## Apache Reverse Proxy Config
+## Pull & Run Stanford NER Docker Container
+```
+docker rm -f stanford-ner
+docker pull lawinsider/stanford-ner-docker
+docker run --init -d -p 5201:80 --name="stanford-ner" --restart always --network="fetch-net" lawinsider/stanford-ner-docker
+```
+
+## Private Reverse Proxy
 ```
 <VirtualHost *:80>
-    Alias "/static" "/opt/contacts/static"
+	ServerName fetch.home
 
-    <Directory "/opt/contacts/static">
-        Require all granted
-    </Directory>
+	# Proxy others normally
+	ProxyPass / http://localhost:5000/
+	ProxyPassReverse / http://localhost:5000/
 
-    ProxyPreserveHost off
-    ProxyRequests off
-    ProxyPass / http://localhost:5000/
-    ProxyPassReverse / http://localhost:5000/
-
-    ErrorLog /var/log/httpd/contacts.log
+	# Create site-specific logs
+	ErrorLog ${APACHE_LOG_DIR}/fetch-error.log
+	CustomLog ${APACHE_LOG_DIR}/fetch-access.log combined
 </VirtualHost>
 ```
 
-## Running Docker Stanford NER
-```
-docker rm stanford-ner
-docker pull lawinsider/stanford-ner-docker
-docker run --init -d -p 4000:80 --name="stanford-ner" --restart always --network="fetch-net" lawinsider/stanford-ner-docker
-```
+## Public Reverse Proxy
+> TBD

@@ -5,7 +5,6 @@ from os import path
 import json
 
 
-AI = True
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 
 
@@ -92,7 +91,7 @@ def root():
     log.info('Received request for {}'.format(request.form['website']))
     url = _sanitize(request.form['website'], log)
     try:
-        contacts = scrape(website=url, log=log, ai=AI)
+        contacts = scrape(website=url, log=log)
         if log:
             log.info('{} results found'.format(len(contacts)))
         data = json.dumps([c.dict() for c in contacts])

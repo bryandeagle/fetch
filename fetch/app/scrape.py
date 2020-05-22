@@ -1,6 +1,6 @@
 from anytree import AnyNode, RenderTree, findall
 from bs4 import BeautifulSoup
-from os import path
+from os import path, environ
 import requests
 import string
 import json
@@ -8,6 +8,8 @@ import re
 
 
 NER_HOST = 'stanford-ner.fetch-net'
+
+
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                          'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -229,10 +231,10 @@ def filter_links(links):
         r'.*(about|team|people|staff|leader|manage|executive|contact).*', link)])
 
 
-def filter_contacts(contacts, log=None, ai=False):
+def filter_contacts(contacts, log=None):
     """ Filter known bad contacts """
     contacts_list = list([c for c in contacts if c.name])
-    if ai:
+    if "NER" in environ:
         contacts_list = [c for c in contacts_list if is_person(c.name, log=log)]
     for email in [r'^info@', r'^support@']:
         contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]
@@ -284,7 +286,7 @@ def scrape_page(website=None, html=None, log=None):
     return set()
 
 
-def scrape(website, log=None, ai=False):
+def scrape(website, log=None):
     """ Main function to scrape all pages """
     # Trying some new things
     response = requests.get(website, headers=HEADERS)
@@ -298,4 +300,4 @@ def scrape(website, log=None, ai=False):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return tag_contacts(filter_contacts(results, log=log, ai=ai))
+    return tag_contacts(filter_contacts(results, log=log))

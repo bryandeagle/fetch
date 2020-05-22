@@ -69,5 +69,5 @@ WantedBy=multi-user.target
 ## Running Docker Stanford NER
 ```
 docker pull lawinsider/stanford-ner-docker
-docker run --init -d -p 4000:80 --name="stanford-ner" --network="fetch-net" lawinsider/stanford-ner-docker
+docker run --init -d -p 4000:80 --name="stanford-ner" --restart always --network="fetch-net" lawinsider/stanford-ner-docker
 ```

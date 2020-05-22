@@ -41,7 +41,7 @@ def json_to_csv(json_txt, website):
 
 def _setup_log():
     """ Set up rotating log file configuration """
-    log_level = DEBUG
+    log_level = INFO
     formatter = Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s',
                           datefmt='%Y-%m-%d %H:%M:%S')
     file_handler = handlers.RotatingFileHandler(filename=LOG_FILE,

@@ -229,22 +229,25 @@ def filter_links(links):
         r'.*(about|team|people|staff|leader|manage|executive|contact).*', link)])
 
 
-def filter_contacts(contacts, ai=False):
+def filter_contacts(contacts, log=None, ai=False):
     """ Filter known bad contacts """
     contacts_list = list([c for c in contacts if c.name])
     if ai:
-        contacts_list = [c for c in contacts_list if is_person(c.name)]
+        contacts_list = [c for c in contacts_list if is_person(c.name, log=log)]
     for email in [r'^info@', r'^support@']:
         contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]
     return set(contacts_list)
 
 
-def is_person(name):
+def is_person(name, log=None):
     """ Determine if a name belongs to a person """
-    ner_tagger = CoreNLPParser(url='http://{}'.format(NER_HOST), tagtype='ner')
-    split_name = [name.split()[0], name.split()[-1]]
-    tags = [x[1] for x in ner_tagger.tag(split_name)]
-    return set(tags) == {'PERSON'}
+    #ner_tagger = CoreNLPParser(url='http://{}'.format(NER_HOST), tagtype='ner')
+    #split_name = [name.split()[0], name.split()[-1]]
+    #tags = [x[1] for x in ner_tagger.tag(split_name)]
+    response = requests.get('http://{}'.format(NER_HOST), params={'query': name})
+    if log:
+        log.info(response.text)
+    return True
 
 
 def tag_contacts(contacts):
@@ -296,4 +299,4 @@ def scrape(website, log=None, ai=False):
             results.update(found_contacts)
     if log:
         log.debug('Scraping complete')
-    return tag_contacts(filter_contacts(results, ai))
+    return tag_contacts(filter_contacts(results, log=log, ai=ai))

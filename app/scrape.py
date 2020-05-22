@@ -7,7 +7,7 @@ from nltk.parse import CoreNLPParser
 import re
 
 
-NER_HOST = 'stanford-ner'
+NER_HOST = 'stanford-ner.fetch-net'
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                          'AppleWebKit/537.36 (KHTML, like Gecko) '

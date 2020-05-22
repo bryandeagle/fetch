@@ -5,7 +5,7 @@ from os import path
 import json
 
 
-def _sanitize(url, log):
+def _sanitize(url):
     if not url.startswith('http'):
         new_url = 'http://{}'.format(url)
     else:
@@ -69,9 +69,9 @@ def index():
 @app.route('/', methods=['POST'])
 def root():
     log.info('Received request for {}'.format(request.form['website']))
-    url = _sanitize(request.form['website'], log)
+    url = _sanitize(request.form['website'])
     try:
-        contacts = scrape(website=url, log=log)
+        contacts = scrape(website=url)
         log.info('{} results found'.format(len(contacts)))
         data = json.dumps([c.dict() for c in contacts])
         flagged = json.dumps([c.dict() for c in contacts if c.hit])

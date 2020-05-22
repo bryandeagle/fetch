@@ -1,7 +1,7 @@
 from flask import Flask, request, send_file, Response, render_template
+from os import path, environ
 from .scrape import scrape
 from .logger import log
-from os import path
 import json
 
 
@@ -34,8 +34,13 @@ def json_to_csv(json_txt, website):
                                               item['position'], item['email'], item['phone'])
     return text
 
-
+# Start application
 app = Flask(__name__, static_folder='../static')
+log.info('Application Started')
+if 'NER' in environ:
+    log.info('Named Entity Recognition Enabled')
+else:
+    log.info('Named Entity Recognition Disabled')
 
 
 @app.route('/log')

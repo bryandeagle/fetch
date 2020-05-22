@@ -223,7 +223,7 @@ def filter_links(links):
 def filter_contacts(contacts):
     """ Filter known bad contacts """
     contacts_list = list([c for c in contacts if c.name])
-    if "NER" in environ:
+    if 'NER' in environ:
         contacts_list = [c for c in contacts_list if is_person(c.name)]
     for email in [r'^info@', r'^support@']:
         contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]

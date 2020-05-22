@@ -241,15 +241,12 @@ def filter_contacts(contacts, log=None, ai=False):
 
 def is_person(name, log=None):
     """ Determine if a name belongs to a person """
-    #ner_tagger = CoreNLPParser(url='http://{}'.format(NER_HOST), tagtype='ner')
-    #split_name = [name.split()[0], name.split()[-1]]
-    #tags = [x[1] for x in ner_tagger.tag(split_name)]
     response = requests.get('http://{}'.format(NER_HOST), params={'query': name})
     content = json.loads(response.text)
     is_person = "PERSON" in content.keys()
     if log:
         log.info('Content: {}. Person: {}'.format(content, is_person))
-    return True
+    return is_person
 
 
 def tag_contacts(contacts):

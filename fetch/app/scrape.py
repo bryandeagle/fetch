@@ -8,7 +8,6 @@ import json
 import re
 
 
-NER_HOST = 'stanford-ner.fetch-net'
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                          'AppleWebKit/537.36 (KHTML, like Gecko) '
                          'Chrome/39.0.2171.95 Safari/537.36'}
@@ -232,7 +231,7 @@ def filter_contacts(contacts):
 
 def is_person(name):
     """ Determine if a name belongs to a person """
-    response = requests.get('http://{}'.format(NER_HOST), params={'query': name})
+    response = requests.get('http://{}'.format(environ['NER']), params={'query': name})
     content = json.loads(response.text)
     is_person = "PERSON" in content.keys()
     log.info('Content: {}. Person: {}'.format(content, is_person))

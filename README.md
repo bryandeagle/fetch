@@ -1,7 +1,8 @@
-# Contacts
+Fetch
+=====
 Flask App to Scrape Contact Information from Given Website!
 
-# Installing
+## Installing
 ```
 python -m venv env
 source env/bin/activate
@@ -9,28 +10,28 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-# Testing
+## Testing
 ```
 python -m pytest tests/
 ```
 
-# Deploying
+## Deploying
 
-## Build & Run Flask Docker Container
+### Build & Run Flask Docker Container
 ```
 docker rm -f fetch
 docker build -t deagle/fetch:stable .
 docker run --init --name="fetch" --network="fetch-net" --restart always -d -p 5200:5000 deagle/fetch:stable
 ```
 
-## Pull & Run Stanford NER Docker Container
+### Pull & Run Stanford NER Docker Container
 ```
 docker rm -f stanford-ner
 docker pull lawinsider/stanford-ner-docker
 docker run --init -d -p 5201:80 --name="stanford-ner" --restart always --network="fetch-net" lawinsider/stanford-ner-docker
 ```
 
-## Private Reverse Proxy
+### Private Reverse Proxy
 ```
 <VirtualHost *:80>
 	ServerName fetch.home
@@ -45,5 +46,5 @@ docker run --init -d -p 5201:80 --name="stanford-ner" --restart always --network
 </VirtualHost>
 ```
 
-## Public Reverse Proxy
+### Public Reverse Proxy
 > TBD

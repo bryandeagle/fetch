@@ -241,7 +241,7 @@ def filter_contacts(contacts, ai=False):
 
 def is_person(name):
     """ Determine if a name belongs to a person """
-    ner_tagger = CoreNLPParser(url='http://{}:9000'.format(NER_HOST), tagtype='ner')
+    ner_tagger = CoreNLPParser(url='http://{}'.format(NER_HOST), tagtype='ner')
     split_name = [name.split()[0], name.split()[-1]]
     tags = [x[1] for x in ner_tagger.tag(split_name)]
     return set(tags) == {'PERSON'}

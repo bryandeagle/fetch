@@ -7,6 +7,7 @@ from nltk.parse import CoreNLPParser
 import re
 
 
+NER_HOST = 'stanford-ner'
 LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                          'AppleWebKit/537.36 (KHTML, like Gecko) '
@@ -224,7 +225,6 @@ def get_all_pages(website=None, log=None, html=None, url=None):
 
 def filter_links(links):
     """ Filter known non-contact links """
-    # return links
     return set([link for link in links if re.match(
         r'.*(about|team|people|staff|leader|manage|executive|contact).*', link)])
 
@@ -241,7 +241,7 @@ def filter_contacts(contacts, ai=False):
 
 def is_person(name):
     """ Determine if a name belongs to a person """
-    ner_tagger = CoreNLPParser(url='http://localhost:9000', tagtype='ner')
+    ner_tagger = CoreNLPParser(url='http://{}:9000'.format(NER_HOST), tagtype='ner')
     split_name = [name.split()[0], name.split()[-1]]
     tags = [x[1] for x in ner_tagger.tag(split_name)]
     return set(tags) == {'PERSON'}

@@ -1,7 +1,6 @@
 # Contacts
 Flask App to Scrape Contact Information from Given Website!
 
-
 # Installing
 ```
 python -m venv env
@@ -65,4 +64,10 @@ WantedBy=multi-user.target
 
     ErrorLog /var/log/httpd/contacts.log
 </VirtualHost>
+```
+
+## Running Docker Stanford NER
+```
+docker pull lawinsider/stanford-ner-docker
+docker run --init -d -p 4000:80 --name="stanford-ner" lawinsider/stanford-ner-docker
 ```

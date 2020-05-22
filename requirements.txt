@@ -1,9 +1,6 @@
-wheel
 bs4
 anytree
 flask
 requests
 pytest
-gunicorn
 jinja2
-nltk

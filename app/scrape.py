@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from os import path
 import requests
 import string
-from nltk.parse import CoreNLPParser
+import json
 import re
 
 
@@ -245,8 +245,10 @@ def is_person(name, log=None):
     #split_name = [name.split()[0], name.split()[-1]]
     #tags = [x[1] for x in ner_tagger.tag(split_name)]
     response = requests.get('http://{}'.format(NER_HOST), params={'query': name})
+    content = json.loads(response.text)
+    is_person = "PERSON" in content.keys()
     if log:
-        log.info(response.text)
+        log.info('Content: {}. Person: {}'.format(content, is_person))
     return True
 
 

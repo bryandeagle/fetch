@@ -37,8 +37,8 @@ docker run --init -d -p 5201:80 --name="stanford-ner" --restart always --network
 	ServerName fetch.home
 
 	# Proxy others normally
-	ProxyPass / http://localhost:5000/
-	ProxyPassReverse / http://localhost:5000/
+	ProxyPass / http://localhost:5200/
+	ProxyPassReverse / http://localhost:5200/
 
 	# Create site-specific logs
 	ErrorLog ${APACHE_LOG_DIR}/fetch-error.log

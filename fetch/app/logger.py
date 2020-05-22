@@ -2,8 +2,7 @@ from logging import handlers, Formatter, getLogger, INFO
 
 
 _log_level = INFO
-_formatter = Formatter(fmt='[%(asctime)s] [%(levelname)s] %(message)s',
-                       datefmt='%Y-%m-%d %H:%M:%S')
+_formatter = Formatter(fmt='[%(levelname)s] %(message)s')
 _file_handler = handlers.RotatingFileHandler(filename='app.log',
                                              maxBytes=5*1024*1024,
                                              encoding='utf-8')

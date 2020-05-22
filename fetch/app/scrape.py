@@ -1,6 +1,7 @@
 from anytree import AnyNode, RenderTree, findall
 from bs4 import BeautifulSoup
 from os import path, environ
+from .logger import log
 import requests
 import string
 import json
@@ -8,9 +9,6 @@ import re
 
 
 NER_HOST = 'stanford-ner.fetch-net'
-
-
-LOG_FILE = '{}.log'.format(path.basename(__file__)[0:-3])
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) '
                          'AppleWebKit/537.36 (KHTML, like Gecko) '
                          'Chrome/39.0.2171.95 Safari/537.36'}
@@ -90,7 +88,7 @@ def render_tree(root_node):
     return result
 
 
-def analyze(element, log=None):
+def analyze(element):
     """ Determines if HTML element is a name, phone number, email or position """
 
     positions = {'accountant', 'administrator', 'analyst', 'architect', 'assistant',
@@ -112,32 +110,27 @@ def analyze(element, log=None):
             split_text = text.translate(str.maketrans('', '', string.punctuation)).split()
             split_text = [x.lower() for x in split_text]
             if re.match(r'^[^@]+@[^@]+\.[^@]+$', text, flags=re.IGNORECASE):
-                if log:
-                    log.debug('Detected email in: {}'.format(text))
+                log.debug('Detected email in: {}'.format(text))
                 return Contact(email=text.lower())
             elif len(split_text) < 10 and len(set(split_text) & positions) > 0:
-                if log:
-                    log.debug('Detected position in: {}'.format(split_text))
+                log.debug('Detected position in: {}'.format(split_text))
                 return Contact(position=text.title())
             elif re.match(r'^[A-Z][a-z\'-]+(\s[A-Z][a-z\'\.-]+)?\s[A-Z][a-z\'-]+$', text, flags=re.IGNORECASE):
-                if log:
-                    log.debug('Detected name in: {}'.format(text))
+                log.debug('Detected name in: {}'.format(text))
                 return Contact(name=text.title())
             elif re.match(r'^(\+0?1\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$', text, flags=re.IGNORECASE):
                 noparen = re.sub(r'[\(\)]', '', text)
-                if log:
-                    log.debug('Detected phone in: {}'.format(text))
+                log.debug('Detected phone in: {}'.format(text))
                 return Contact(phone=re.sub(r'[-\.]', '-', noparen))
             else:
-                if log:
-                    log.debug('Detected nothing in: {} ({})'.format(text, text))
+                log.debug('Detected nothing in: {} ({})'.format(text, text))
 
 
-def walker(soup, node, log=None):
+def walker(soup, node):
     """ Traverses the bs4 tree and constructs a new one """
     if soup.name is not None:
-        new_node = AnyNode(parent=node, contact=analyze(soup, log=log))
-        [walker(child, new_node, log=log) for child in soup.children]
+        new_node = AnyNode(parent=node, contact=analyze(soup))
+        [walker(child, new_node) for child in soup.children]
 
 
 def tighten(node):
@@ -182,14 +175,12 @@ def roll_up(root_node):
                     node.parent = None
 
 
-def get_contacts(root_node, log=None):
+def get_contacts(root_node):
     """ Get all the contacts from our tree """
-    if log:
-        log.debug(render_tree(root_node))
+    log.debug(render_tree(root_node))
     clean_tree(root_node)
     roll_up(root_node)
-    if log:
-        log.debug(render_tree(root_node))
+    log.debug(render_tree(root_node))
     all_nodes = findall(root_node, filter_=lambda x: x.contact and x.contact.name and x.contact.position)
     [n.contact.get_names() for n in all_nodes]
     return set([n.contact for n in all_nodes])
@@ -203,7 +194,7 @@ def worth_it(html):
     return email or phone or True
 
 
-def get_all_pages(website=None, log=None, html=None, url=None):
+def get_all_pages(website=None, html=None, url=None):
     """ Get all pages from a given website """
     if website:
         response = requests.get(website, headers=HEADERS)
@@ -211,8 +202,7 @@ def get_all_pages(website=None, log=None, html=None, url=None):
         url = response.url
     site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
     all_links = site.findAll('a', attrs={'href': re.compile(r'^/|({})'.format(url))})
-    if log:
-        log.debug('Page: {}. Links: {}'.format(url, [link.get('href') for link in all_links]))
+    log.debug('Page: {}. Links: {}'.format(url, [link.get('href') for link in all_links]))
     links = set()
     for link in all_links:
         if link.get('href').startswith('/'):
@@ -220,8 +210,7 @@ def get_all_pages(website=None, log=None, html=None, url=None):
         else:
             links.add(link.get('href'))
     filtered = filter_links(links)
-    if log:
-        log.debug('{} Filtered to {}'.format(links, filtered))
+    log.debug('{} Filtered to {}'.format(links, filtered))
     return filtered
 
 
@@ -231,23 +220,22 @@ def filter_links(links):
         r'.*(about|team|people|staff|leader|manage|executive|contact).*', link)])
 
 
-def filter_contacts(contacts, log=None):
+def filter_contacts(contacts):
     """ Filter known bad contacts """
     contacts_list = list([c for c in contacts if c.name])
     if "NER" in environ:
-        contacts_list = [c for c in contacts_list if is_person(c.name, log=log)]
+        contacts_list = [c for c in contacts_list if is_person(c.name)]
     for email in [r'^info@', r'^support@']:
         contacts_list = [c for c in contacts_list if c.email is None or not re.match(email, c.email)]
     return set(contacts_list)
 
 
-def is_person(name, log=None):
+def is_person(name):
     """ Determine if a name belongs to a person """
     response = requests.get('http://{}'.format(NER_HOST), params={'query': name})
     content = json.loads(response.text)
     is_person = "PERSON" in content.keys()
-    if log:
-        log.info('Content: {}. Person: {}'.format(content, is_person))
+    log.info('Content: {}. Person: {}'.format(content, is_person))
     return is_person
 
 
@@ -266,38 +254,34 @@ def ignore_robots(html):
     return html
 
 
-def scrape_page(website=None, html=None, log=None):
+def scrape_page(website=None, html=None):
     """ Scrape a single page """
     if website:  # Download website
         html = requests.get(website, headers=HEADERS).text
     site = BeautifulSoup(ignore_robots(html), features='html.parser').find(name='body')
     # If page has no emails, ignore
     if worth_it(site):
-        if log and website:
-            log.info('Parsing page: {}'.format(website))
+        log.info('Parsing page: {}'.format(website))
         # Walk webpage and create tree
         root = AnyNode(contact=None)
-        walker(site, root, log)
-        found_contacts = get_contacts(root, log)
+        walker(site, root)
+        found_contacts = get_contacts(root)
         for contact in found_contacts:
-            if log:
-                log.info('Found: {}'.format(contact))
+            log.info('Found: {}'.format(contact))
         return found_contacts
     return set()
 
 
-def scrape(website, log=None):
+def scrape(website):
     """ Main function to scrape all pages """
     # Trying some new things
     response = requests.get(website, headers=HEADERS)
-    results = scrape_page(html=response.text, log=log)
-    all_pages = get_all_pages(html=response.text, log=log, url=response.url)
-    if log:
-        log.debug('Pages: {}'.format(all_pages))
+    results = scrape_page(html=response.text)
+    all_pages = get_all_pages(html=response.text, url=response.url)
+    log.debug('Pages: {}'.format(all_pages))
     for page in all_pages:
-        found_contacts = scrape_page(website=page, log=log)
+        found_contacts = scrape_page(website=page)
         if found_contacts:
             results.update(found_contacts)
-    if log:
-        log.debug('Scraping complete')
-    return tag_contacts(filter_contacts(results, log=log))
+    log.debug('Scraping complete')
+    return tag_contacts(filter_contacts(results))

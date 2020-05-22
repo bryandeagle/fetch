@@ -6,6 +6,7 @@ import json
 
 
 def _sanitize(url):
+    """ Sanitize user-formatted URL """
     if not url.startswith('http'):
         new_url = 'http://{}'.format(url)
     else:
@@ -17,6 +18,7 @@ def _sanitize(url):
 
 
 def _display(url):
+    """ Create displayable URL """
     if url.startswith('http://'):
         url = url[7:]
     elif url.startswith('https://'):
@@ -51,7 +53,8 @@ def get_log():
 
 @app.route('/download', methods=['POST'])
 def download():
-    """ Returns CSV file """
+    """ Returns CSV file of all contacts """
+    log.info('Downloading all contacts')
     data = json_to_csv(request.form['data'], request.form['website'])
     return Response(data, mimetype="text/csv",
                     headers={"Content-disposition": "attachment; filename=contacts.csv"})
@@ -59,7 +62,8 @@ def download():
 
 @app.route('/flagged', methods=['POST'])
 def flagged():
-    """ Returns CSV file """
+    """ Returns CSV file of flagged contacts """
+    log.info('Downloading flagged contacts')
     data = json_to_csv(request.form['flagged'], request.form['website'])
     return Response(data, mimetype="text/csv",
                     headers={"Content-disposition": "attachment; filename=contacts.csv"})
@@ -73,7 +77,7 @@ def index():
 
 @app.route('/', methods=['POST'])
 def root():
-    log.info('Received request for {}'.format(request.form['website']))
+    log.info('Request for {}'.format(request.form['website']))
     url = _sanitize(request.form['website'])
     try:
         contacts = scrape(website=url)

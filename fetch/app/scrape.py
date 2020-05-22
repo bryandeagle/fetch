@@ -274,6 +274,7 @@ def scrape_page(website=None, html=None):
 def scrape(website):
     """ Main function to scrape all pages """
     # Trying some new things
+    log.info('Scraping {}'.format(website))
     response = requests.get(website, headers=HEADERS)
     results = scrape_page(html=response.text)
     all_pages = get_all_pages(html=response.text, url=response.url)

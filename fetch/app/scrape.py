@@ -113,7 +113,7 @@ def analyze(element):
                 return Contact(email=text.lower())
             elif len(split_text) < 10 and len(set(split_text) & positions) > 0:
                 log.debug('Detected position in: {}'.format(split_text))
-                return Contact(position=text.title())
+                return Contact(position=text.title().replace('\n', ''))
             elif re.match(r'^[A-Z][a-z\'-]+(\s[A-Z][a-z\'\.-]+)?\s[A-Z][a-z\'-]+$', text, flags=re.IGNORECASE):
                 log.debug('Detected name in: {}'.format(text))
                 return Contact(name=text.title())
@@ -234,7 +234,7 @@ def is_person(name):
     response = requests.get('http://{}'.format(environ['NER']), params={'query': name})
     content = json.loads(response.text)
     is_person = "PERSON" in content.keys()
-    log.info('Content: {}. Person: {}'.format(content, is_person))
+    log.debug('Content: {}. Person: {}'.format(content, is_person))
     return is_person
 
 

@@ -6,7 +6,6 @@ declare -a minify=("fetch/static/index.html"
 
 for i in "${minify[@]}"
 do
-    echo "$i"
     html-minifier --collapse-whitespace --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --use-short-doctype --minify-css true --minify-js true $i -o $i.min
     mv $i.min $i
 done

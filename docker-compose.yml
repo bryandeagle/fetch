@@ -1,6 +1,7 @@
 version: '3.3'
 services:
     fetch:
+        build: .
         container_name: fetch
         network_mode: fetch-net
         environment:
@@ -8,7 +9,6 @@ services:
         restart: always
         ports:
             - '5200:5000'
-        image: 'deagle/fetch:stable'
     stanford-ner-docker:
         ports:
             - '5201:80'

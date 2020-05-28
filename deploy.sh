@@ -11,10 +11,5 @@ do
 done
 
 docker rm -f fetch
-docker rm -f stanford-ner
-
-#docker build -t deagle/fetch:stable .
-#docker pull lawinsider/stanford-ner-docker
-
-#docker run --init --name="fetch" --network="fetch-net"  --env NER=stanford-ner --restart always -d -p 5200:5000 deagle/fetch:stable
-docker-compose up
+docker build -t deagle/fetch:stable .
+docker run --init --name="fetch" --network="fetch-net"  --env NER=stanford-ner --restart always -d -p 5200:5000 deagle/fetch:stable

@@ -1,0 +1,18 @@
+version: '1'
+services:
+    fetch:
+        container_name: fetch
+        network_mode: fetch-net
+        environment:
+            - NER=stanford-ner
+        restart: always
+        ports:
+            - '5200:5000'
+        image: 'deagle/fetch:stable'
+    stanford-ner-docker:
+        ports:
+            - '5201:80'
+        container_name: stanford-ner
+        restart: always
+        network_mode: fetch-net
+        image: lawinsider/stanford-ner-docker

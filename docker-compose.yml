@@ -9,10 +9,3 @@ services:
         restart: always
         ports:
             - '5200:5000'
-    #stanford-ner-docker:
-    #    ports:
-    #        - '5201:80'
-    #    container_name: stanford-ner
-    #    restart: always
-    #    network_mode: fetch-net
-    #    image: lawinsider/stanford-ner-docker

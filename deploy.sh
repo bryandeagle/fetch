@@ -1,5 +1,9 @@
 docker rm -f fetch
+docker rm -f stanford-ner
+
 docker build -q -t deagle/fetch:stable .
+docker pull -q lawinsider/stanford-ner-docker
+
 docker run -d \
     --init
     --name fetch \
@@ -10,9 +14,6 @@ docker run -d \
     --restart always \
     --publish 127.0.0.1:5200:5000 \
     deagle/fetch:stable
-
-docker rm -f stanford-ner
-docker pull -q lawinsider/stanford-ner-docker
 docker run -d \
     --init \
     --publish 127.0.0.1:5201:80 \

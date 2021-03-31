@@ -5,7 +5,7 @@ docker build -q -t deagle/fetch:stable .
 docker pull -q lawinsider/stanford-ner-docker
 
 docker run -d \
-    --init
+    --init \
     --name fetch \
     --network fetch-net \
     --ip 172.18.0.2 \
